@@ -112,8 +112,6 @@ const store = Redux.createStore(
 
 // subscribe listener and return function to unsubscribe listener
 const unsubscribe = store.subscribe(() => {
-  console.log('This current state is', store.getState());
-
   const { goals, todos } = store.getState();
 
   // reset DOM
@@ -131,19 +129,15 @@ const unsubscribe = store.subscribe(() => {
 // DOM CODE
 
 function addTodoToDOM(todo) {
-  const button = document.createElement('button');
   const node = document.createElement('li');
   const text = document.createTextNode(todo.name);
-
-  // button label
-  button.innerHTML = 'X';
-  button.addEventListener('click', () => {
-    store.dispatch(removeTodoAction(todo.id));
-  });
+  const removeBtn = createRemoveButton(() =>
+    store.dispatch(removeTodoAction(todo.id))
+  );
 
   // draw list item
   node.appendChild(text);
-  node.appendChild(button);
+  node.appendChild(removeBtn);
 
   // toggle todo complete
   node.addEventListener('click', () => {
@@ -157,24 +151,30 @@ function addTodoToDOM(todo) {
 }
 
 function addGoalToDOM(goal) {
-  const button = document.createElement('button');
   const node = document.createElement('li');
   const text = document.createTextNode(goal.name);
-
-  // button label
-  button.innerHTML = 'X';
-  button.addEventListener('click', () => {
-    store.dispatch(removeGoalAction(goal.id));
-  });
+  const removeBtn = createRemoveButton(() =>
+    store.dispatch(removeGoalAction(goal.id))
+  );
 
   // draw list item
   node.appendChild(text);
-  node.appendChild(button);
+  node.appendChild(removeBtn);
 
   document.getElementById('goals').appendChild(node);
 }
 
-function removeTodoFromDOM(id) {}
+function createRemoveButton(clickHandler) {
+  const removeBtn = document.createElement('button');
+
+  // button label
+  removeBtn.innerHTML = 'X';
+
+  // click handler
+  removeBtn.addEventListener('click', clickHandler);
+
+  return removeBtn;
+}
 
 // event handlers
 
