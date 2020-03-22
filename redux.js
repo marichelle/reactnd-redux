@@ -1,43 +1,11 @@
-// LIBRARY CODE
+// HELPER FUNCTIONS
 
-function createStore(reducer) {
-  /*
-  The store should have 4 parts:
-  1. the state tree (state)
-  2. a way to get the state tree (getState())
-  3. a way to listen and respond to the state changing (subscribe())
-  4. a way to update the state
-  */
-
-  // the state
-  let state;
-  let listeners = [];
-
-  // returns the state
-  const getState = () => state;
-
-  // listens for change
-  const subscribe = listener => {
-    listeners.push(listener);
-
-    return () => {
-      listeners = listeners.filter(el => el !== listener);
-    };
-  };
-
-  // updates the state
-  const dispatch = action => {
-    state = reducer(state, action);
-
-    // invoke each subscribed listener
-    listeners.forEach(listener => listener());
-  };
-
-  return {
-    getState,
-    subscribe,
-    dispatch
-  };
+function generateId() {
+  return (
+    Math.random()
+      .toString(36)
+      .substring(2) + new Date().getTime().toString(36)
+  );
 }
 
 // APP CODE
@@ -121,27 +89,23 @@ function goals(state = [], action) {
   }
 }
 
+/* replaced by Redux.combineReducers()
 function app(state = {}, action) {
   // return an object of invoked reducer functions that manage a specific slice of an app's state
   return {
     goals: goals(state.goals, action),
     todos: todos(state.todos, action)
   };
-}
-
-// HELPER FUNCTIONS
-
-function generateId() {
-  return (
-    Math.random()
-      .toString(36)
-      .substring(2) + new Date().getTime().toString(36)
-  );
-}
+} */
 
 // DEMO CODE
 
-const store = createStore(app);
+const store = Redux.createStore(
+  Redux.combineReducers({
+    todos,
+    goals
+  })
+);
 
 // subscribe function can be passed a callback function
 // to be called whenever the state changes internally
