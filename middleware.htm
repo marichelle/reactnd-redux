@@ -3,6 +3,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
   </head>
   <body>
@@ -18,6 +21,12 @@
       <button id="todoBtn">Add</button>
       <ul id="todos"></ul>
     </div>
-    <script src="middleware.js"></script>
+
+    <hr />
+
+    <div id="app"></div>
+
+    <script type="text/javascript" src="middleware.js"></script>
+    <script type="text/babel" src="reactAndRedux.js"></script>
   </body>
 </html>
