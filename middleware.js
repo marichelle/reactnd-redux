@@ -145,6 +145,8 @@ const store = Redux.createStore(
   Redux.applyMiddleware(checker, logger)
 );
 
+/*
+
 // subscribe function can be passed a callback function
 // to be called whenever the state changes internally
 
@@ -250,3 +252,5 @@ function addGoal() {
 // event listeners
 document.getElementById('todoBtn').addEventListener('click', addTodo);
 document.getElementById('goalBtn').addEventListener('click', addGoal);
+
+*/
