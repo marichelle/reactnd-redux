@@ -2,12 +2,23 @@ class App extends React.Component {
   componentDidMount() {
     const { store } = this.props;
 
+    Promise.all([API.fetchTodos(), API.fetchGoals()]).then(function([
+      todos,
+      goals
+    ]) {
+      store.dispatch(receiveDataAction(todos, goals));
+    });
+
     store.subscribe(() => this.forceUpdate());
   }
 
   render() {
     const { store } = this.props;
-    const { todos, goals } = store.getState();
+    const { todos, goals, loading } = store.getState();
+
+    if (loading) {
+      return <h3>Loading...</h3>;
+    }
 
     return (
       <div>
