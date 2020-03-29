@@ -26,6 +26,21 @@ function addTodoAction(todo) {
   };
 }
 
+function handleDeleteTodo(todo) {
+  // return a function that returns an object
+  // instead of returning an object directly!
+  return dispatch => {
+    // optimistic update
+    dispatch(removeTodoAction(todo.id));
+
+    return API.deleteTodo(todo.id).catch(() => {
+      // revert if update fails
+      alert('An error occurred. Try again.');
+      dispatch(addTodoAction(todo));
+    });
+  };
+}
+
 function removeTodoAction(id) {
   return {
     type: REMOVE_TODO,
@@ -160,6 +175,15 @@ const logger = store => next => action => {
   return result;
 };
 
+// example of how ReduxThunk middleware works
+const thunk = store => next => action => {
+  if (typeof action === 'function') {
+    return action(store.dispatch);
+  }
+
+  return next(action);
+};
+
 // DEMO CODE
 
 const store = Redux.createStore(
@@ -168,7 +192,7 @@ const store = Redux.createStore(
     goals,
     loading
   }),
-  Redux.applyMiddleware(checker, logger)
+  Redux.applyMiddleware(ReduxThunk.default, checker, logger)
 );
 
 /*

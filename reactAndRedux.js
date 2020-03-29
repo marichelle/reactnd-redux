@@ -75,16 +75,7 @@ class Todos extends React.Component {
   };
 
   handleRemoveItem = item => {
-    const { store } = this.props;
-
-    // optimistic update
-    store.dispatch(removeTodoAction(item.id));
-
-    return API.deleteTodo(item.id).catch(() => {
-      // revert if update fails
-      alert('An error occurred. Try again.');
-      store.dispatch(addTodoAction(item));
-    });
+    this.props.store.dispatch(handleDeleteTodo(item));
   };
 
   handleToggleItem = item => {
