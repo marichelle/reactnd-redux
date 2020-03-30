@@ -33,16 +33,15 @@ class Goals extends React.Component {
   addGoal = e => {
     e.preventDefault();
 
-    return API.saveGoal(this.input.value)
-      .then(goal => {
-        this.input.value = '';
-        this.props.store.dispatch(addGoalAction(goal));
-      })
-      .catch(() => alert('An error occurred. Try again.'));
+    // pass a callback in order to invoke the same "clear form field"
+    // functionality within the handleAddGoal() action creator
+    this.props.store.dispatch(
+      handleAddGoal(this.input.value, () => (this.input.value = ''))
+    );
   };
 
   handleRemoveItem = item => {
-    this.props.store.dispatch(removeGoalAction(item.id));
+    this.props.store.dispatch(handleDeleteGoal(item));
   };
 
   render() {
@@ -66,12 +65,11 @@ class Todos extends React.Component {
   handleAddItem = e => {
     e.preventDefault();
 
-    return API.saveTodo(this.input.value)
-      .then(todo => {
-        this.input.value = '';
-        this.props.store.dispatch(addTodoAction(todo));
-      })
-      .catch(() => alert('An error occurred. Try again.'));
+    // pass a callback in order to invoke the same "clear form field"
+    // functionality within the handleSaveTodo() action creator
+    this.props.store.dispatch(
+      handleAddTodo(this.input.value, () => (this.input.value = ''))
+    );
   };
 
   handleRemoveItem = item => {
@@ -79,16 +77,7 @@ class Todos extends React.Component {
   };
 
   handleToggleItem = item => {
-    const { store } = this.props;
-
-    // optimistic update
-    store.dispatch(toggleTodoAction(item.id));
-
-    return API.saveTodoToggle(item.id).catch(() => {
-      // revert if update fails
-      alert('An error occurred. Try again.');
-      store.dispatch(toggleTodoAction(item.id));
-    });
+    this.props.store.dispatch(handleToggle(item.id));
   };
 
   render() {

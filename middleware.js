@@ -26,6 +26,16 @@ function addTodoAction(todo) {
   };
 }
 
+function handleAddTodo(name, cb) {
+  return dispatch =>
+    API.saveTodo(name)
+      .then(todo => {
+        cb();
+        dispatch(addTodoAction(todo));
+      })
+      .catch(() => alert('An error occurred. Try again.'));
+}
+
 function handleDeleteTodo(todo) {
   // return a function that returns an object
   // instead of returning an object directly!
@@ -37,6 +47,19 @@ function handleDeleteTodo(todo) {
       // revert if update fails
       alert('An error occurred. Try again.');
       dispatch(addTodoAction(todo));
+    });
+  };
+}
+
+function handleToggle(id) {
+  return dispatch => {
+    // optimistic update
+    dispatch(toggleTodoAction(id));
+
+    return API.saveTodoToggle(id).catch(() => {
+      // revert if update fails
+      dispatch(toggleTodoAction(id));
+      alert('An error occurred. Try again.');
     });
   };
 }
@@ -59,6 +82,27 @@ function addGoalAction(goal) {
   return {
     type: ADD_GOAL,
     goal
+  };
+}
+
+function handleAddGoal(name, cb) {
+  return dispatch =>
+    API.saveGoal(name)
+      .then(goal => {
+        cb();
+        dispatch(addGoalAction(goal));
+      })
+      .catch(() => alert('An error occurred. Try again.'));
+}
+
+function handleDeleteGoal(goal) {
+  return dispatch => {
+    dispatch(removeGoalAction(goal.id));
+
+    return API.deleteGoal(goal.id).catch(() => {
+      dispatch(addGoalAction(goal));
+      alert('An error occurred. Try again.');
+    });
   };
 }
 
@@ -176,13 +220,13 @@ const logger = store => next => action => {
 };
 
 // example of how ReduxThunk middleware works
-const thunk = store => next => action => {
+/* const thunk = store => next => action => {
   if (typeof action === 'function') {
     return action(store.dispatch);
   }
 
   return next(action);
-};
+}; */
 
 // DEMO CODE
 
