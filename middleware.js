@@ -183,24 +183,6 @@ function loading(state = true, action) {
   }
 }
 
-/* replaced by Redux.combineReducers()
-function app(state = {}, action) {
-  // return an object of invoked reducer functions that manage a specific slice of an app's state
-  return {
-    goals: goals(state.goals, action),
-    todos: todos(state.todos, action)
-  };
-} */
-
-// MIDDLEWARE
-
-/* // replace es5 with es6
-function checker(store) {
-  return function(next) {
-    return function(action) {};
-  };
-} */
-
 const checker = store => next => action => {
   // hijack the dispatch function
   if (
@@ -229,15 +211,6 @@ const logger = store => next => action => {
   return result;
 };
 
-// example of how ReduxThunk middleware works
-/* const thunk = store => next => action => {
-  if (typeof action === 'function') {
-    return action(store.dispatch);
-  }
-
-  return next(action);
-}; */
-
 // DEMO CODE
 
 const store = Redux.createStore(
@@ -248,113 +221,3 @@ const store = Redux.createStore(
   }),
   Redux.applyMiddleware(ReduxThunk.default, checker, logger)
 );
-
-/*
-
-// subscribe function can be passed a callback function
-// to be called whenever the state changes internally
-
-// subscribe listener and return function to unsubscribe listener
-const unsubscribe = store.subscribe(() => {
-  const { goals, todos } = store.getState();
-
-  // reset DOM
-  document.getElementById('goals').innerHTML = '';
-  document.getElementById('todos').innerHTML = '';
-
-  // update DOM
-  goals.forEach(goal => addGoalToDOM(goal));
-  todos.forEach(todo => addTodoToDOM(todo));
-});
-
-// unsubscribe listener
-// unsubscribe();
-
-// DOM CODE
-
-function addTodoToDOM(todo) {
-  const node = document.createElement('li');
-  const text = document.createTextNode(todo.name);
-  const removeBtn = createRemoveButton(() =>
-    store.dispatch(removeTodoAction(todo.id))
-  );
-
-  // draw list item
-  node.appendChild(text);
-  node.appendChild(removeBtn);
-
-  // toggle todo complete
-  node.addEventListener('click', () => {
-    store.dispatch(toggleTodoAction(todo.id));
-  });
-
-  node.style.textDecoration = todo.complete ? 'line-through' : 'none'; // strikethrough todo item if complete
-
-  // add TODO item to DOM
-  document.getElementById('todos').appendChild(node);
-}
-
-function addGoalToDOM(goal) {
-  const node = document.createElement('li');
-  const text = document.createTextNode(goal.name);
-  const removeBtn = createRemoveButton(() =>
-    store.dispatch(removeGoalAction(goal.id))
-  );
-
-  // draw list item
-  node.appendChild(text);
-  node.appendChild(removeBtn);
-
-  document.getElementById('goals').appendChild(node);
-}
-
-function createRemoveButton(clickHandler) {
-  const removeBtn = document.createElement('button');
-
-  // button label
-  removeBtn.innerHTML = 'X';
-
-  // click handler
-  removeBtn.addEventListener('click', clickHandler);
-
-  return removeBtn;
-}
-
-// event handlers
-
-function addTodo() {
-  const input = document.getElementById('todo');
-  const name = input.value;
-
-  // reset val
-  input.value = '';
-
-  store.dispatch(
-    addTodoAction({
-      id: generateId(),
-      name,
-      complete: false
-    })
-  );
-}
-
-function addGoal() {
-  const input = document.getElementById('goal');
-  const name = input.value;
-
-  // reset val
-  input.value = '';
-
-  store.dispatch(
-    addGoalAction({
-      id: generateId(),
-      name
-    })
-  );
-}
-
-// event listeners
-document.getElementById('todoBtn').addEventListener('click', addTodo);
-document.getElementById('goalBtn').addEventListener('click', addGoal);
-
-*/

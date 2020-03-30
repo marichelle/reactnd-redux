@@ -8,7 +8,7 @@ class App extends React.Component {
 
   render() {
     const { store } = this.props;
-    const { todos, goals, loading } = store.getState();
+    const { loading } = store.getState();
 
     if (loading) {
       return <h3>Loading...</h3>;
@@ -16,9 +16,45 @@ class App extends React.Component {
 
     return (
       <div>
-        <Todos todos={todos} store={this.props.store} />
-        <Goals goals={goals} store={this.props.store} />
+        <ConnectedTodos />
+        <ConnectedGoals />
       </div>
+    );
+  }
+}
+
+class ConnectedApp extends React.Component {
+  render() {
+    return (
+      <Context.Consumer>{store => <App store={store} />}</Context.Consumer>
+    );
+  }
+}
+
+class ConnectedGoals extends React.Component {
+  render() {
+    return (
+      <Context.Consumer>
+        {store => {
+          const { goals } = store.getState();
+
+          return <Goals goals={goals} dispatch={store.dispatch} />;
+        }}
+      </Context.Consumer>
+    );
+  }
+}
+
+class ConnectedTodos extends React.Component {
+  render() {
+    return (
+      <Context.Consumer>
+        {store => {
+          const { todos } = store.getState();
+
+          return <Todos todos={todos} dispatch={store.dispatch} />;
+        }}
+      </Context.Consumer>
     );
   }
 }
@@ -29,13 +65,13 @@ class Goals extends React.Component {
 
     // pass a callback in order to invoke the same "clear form field"
     // functionality within the handleAddGoal() action creator
-    this.props.store.dispatch(
+    this.props.dispatch(
       handleAddGoal(this.input.value, () => (this.input.value = ''))
     );
   };
 
   handleRemoveItem = item => {
-    this.props.store.dispatch(handleDeleteGoal(item));
+    this.props.dispatch(handleDeleteGoal(item));
   };
 
   render() {
@@ -61,17 +97,17 @@ class Todos extends React.Component {
 
     // pass a callback in order to invoke the same "clear form field"
     // functionality within the handleSaveTodo() action creator
-    this.props.store.dispatch(
+    this.props.dispatch(
       handleAddTodo(this.input.value, () => (this.input.value = ''))
     );
   };
 
   handleRemoveItem = item => {
-    this.props.store.dispatch(handleDeleteTodo(item));
+    this.props.dispatch(handleDeleteTodo(item));
   };
 
   handleToggleItem = item => {
-    this.props.store.dispatch(handleToggle(item.id));
+    this.props.dispatch(handleToggle(item.id));
   };
 
   render() {
@@ -118,4 +154,21 @@ const List = props => {
   );
 };
 
-ReactDOM.render(<App store={store} />, document.getElementById('app'));
+const Context = React.createContext();
+
+class Provider extends React.Component {
+  render() {
+    return (
+      <Context.Provider value={this.props.store}>
+        {this.props.children}
+      </Context.Provider>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ConnectedApp />
+  </Provider>,
+  document.getElementById('app')
+);
