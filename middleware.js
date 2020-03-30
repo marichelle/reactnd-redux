@@ -19,6 +19,16 @@ const REMOVE_GOAL = 'REMOVE_GOAL';
 
 // action creators
 
+function handleInitialData() {
+  return dispatch =>
+    Promise.all([API.fetchTodos(), API.fetchGoals()]).then(function([
+      todos,
+      goals
+    ]) {
+      dispatch(receiveDataAction(todos, goals));
+    });
+}
+
 function addTodoAction(todo) {
   return {
     type: ADD_TODO,
