@@ -91,54 +91,6 @@ class Todos extends React.Component {
   }
 }
 
-class Provider extends React.Component {
-  render() {
-    return (
-      <Context.Provider value={this.props.store}>
-        {this.props.children}
-      </Context.Provider>
-    );
-  }
-}
-
-function connect(mapStateToProps) {
-  return Component => {
-    class Receiver extends React.Component {
-      componentDidMount() {
-        const { subscribe } = this.props.store;
-
-        this.unsubscribe = subscribe(() => this.forceUpdate());
-      }
-
-      componentWillUnmount() {
-        this.unsubscribe();
-      }
-
-      render() {
-        const { dispatch, getState } = this.props.store;
-        const state = getState();
-        const stateNeeded = mapStateToProps(state);
-
-        return <Component dispatch={dispatch} {...stateNeeded} />;
-      }
-    }
-
-    class ConnectedComponent extends React.Component {
-      render() {
-        return (
-          <Context.Consumer>
-            {store => <Receiver store={store} />}
-          </Context.Consumer>
-        );
-      }
-    }
-
-    return ConnectedComponent;
-  };
-}
-
-const Context = React.createContext();
-
 /*
     Currying technique is used here. When connect()
     is invoked, it returns a function.
@@ -146,15 +98,15 @@ const Context = React.createContext();
     1st set of parens: data the component needs
     2nd set of parens: pass the component to render
 */
-const ConnectedApp = connect(state => ({
+const ConnectedApp = ReactRedux.connect(state => ({
   loading: state.loading
 }))(App);
 
-const ConnectedGoals = connect(state => ({
+const ConnectedGoals = ReactRedux.connect(state => ({
   goals: state.goals
 }))(Goals);
 
-const ConnectedTodos = connect(state => ({
+const ConnectedTodos = ReactRedux.connect(state => ({
   todos: state.todos
 }))(Todos);
 
@@ -182,8 +134,8 @@ const List = props => {
 };
 
 ReactDOM.render(
-  <Provider store={store}>
+  <ReactRedux.Provider store={store}>
     <ConnectedApp />
-  </Provider>,
+  </ReactRedux.Provider>,
   document.getElementById('app')
 );
